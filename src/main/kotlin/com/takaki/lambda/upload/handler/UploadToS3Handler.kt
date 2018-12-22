@@ -19,18 +19,21 @@ class UploadToS3Handler {
         try {
             val logger = context.logger
 
-            // アップロードするS3オブジェクト
+            // set S3 object metadata when uploading
             val metaData = ObjectMetadata()
             metaData.setHeader("Cache-Control", "max-age=86400")
             metaData.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
 
-            val url = URL("URL you want to")
+            // get .gz file
+            val url = URL("http://hoge.com/fuga.gz")
             val conn = url.openConnection()
-            val dataInStream = DataInputStream(conn.getInputStream())
-            val targetFile = GZIPInputStream(dataInStream)
+            val dataInputStream = DataInputStream(conn.getInputStream())
+            // read .gz file input stream
+            val targetFileInputStream = GZIPInputStream(dataInputStream)
 
+            // get your S3 client
             val client = AmazonS3Client()
-            client.putObject(PutObjectRequest("Bucket Name", "File Name (Object Key)", targetFile, metaData))
+            client.putObject(PutObjectRequest("Bucket Name", "File Name (Object Key)", targetFileInputStream, metaData))
 
         } catch (e: Exception) {
             return "Uploading is failed"
